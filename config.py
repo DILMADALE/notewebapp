@@ -1,4 +1,4 @@
-import host
+import os
 
 db_host = os.environ.get('DB_HOST', default='localhost')
 db_name = os.environ.get('DB_NAME', default='notes')
