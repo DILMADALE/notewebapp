@@ -1,8 +1,8 @@
 import os
 
-from flask import Flask, render_template, redirect, url_for, request, flash
+from flask import Flask, render_template, redirect, url_for, request, session, flash
 from flask_migrate import Migrate
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 def create_app(test_config=None):
 	app = Flask(__name__)
@@ -36,6 +36,7 @@ def create_app(test_config=None):
 			if error is None:
 				user = User(username=username, password=password)
 				db.session.add(user)
+				print(f"User name {username} and password {password}")
 				db.session.commit()
 				flash("Successfully signed up! Please log in.", 'success')
 				return redirect(url_for('log_in'))
@@ -43,8 +44,35 @@ def create_app(test_config=None):
 
 		return render_template('sign_up.html')
 
-	@app.route('/log_in')
+	@app.route('/log_in', methods=('GET', 'POST'))
 	def log_in():
-		return "Login"
+		if request.method == 'POST':
+			username = request.form['username']
+			password = request.form['password']
+			error = None
 
+			user = User.query.filter_by(username=username).first()
+			print(f"Username {user.username} and password {user.password}")
+
+			if not user or not user.password == password:
+				error = 'Username or password are incorrect'
+				print(f"User name {username} and password {password}")
+
+			if error is None:
+				session.clear()
+				session['user_id'] = user.id
+				return redirect(url_for('index'))
+
+			flash(error, category='error')
+		return render_template('log_in.html')
+
+	@app.route('/log_out', methods=('GET', 'DELETE'))
+	def log_out():
+		session.clear()
+		flash('Successfully logged out.', 'success')
+		return redirect(url_for('log_in'))
+
+	@app.route('/')
+	def index():
+		return 'Index'
 	return app
