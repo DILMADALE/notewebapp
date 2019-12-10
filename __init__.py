@@ -44,7 +44,8 @@ def create_app(test_config=None):
 	def sign_up():
 		if request.method == 'POST':
 			username = request.form['username']
-			password = request.form['password']
+			password1 = request.form['password']
+			password = generate_password_hash(password1)
 			error = None
 
 			if not username:
@@ -75,7 +76,8 @@ def create_app(test_config=None):
 			user = User.query.filter_by(username=username).first()
 			print(f"Username {user.username} and password {user.password}")
 
-			if not user or not user.password == password:
+#			if not user or not user.password == password:
+			if not user or not check_password_hash(user.password, password):
 				error = 'Username or password are incorrect'
 				print(f"User name {username} and password {password}")
 

@@ -10,7 +10,7 @@
   {% for note in notes %}
     <article class="message">
       <div class="message-header">
-        <p>{{note.id}} {{ note.title }}</p>
+        <p>{{ note.title }}</p>
         <div>
           <a class="button is-primary is-small has-text-weight-bold" href="{{ url_for('note_update', note_id=note.id) }}">
             Edit Note
