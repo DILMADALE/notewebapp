@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from mistune import markdown:
+from mistune import markdown
 
 db = SQLAlchemy()
 
